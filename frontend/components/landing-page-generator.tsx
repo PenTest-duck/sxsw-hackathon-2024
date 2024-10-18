@@ -54,7 +54,7 @@ export function LandingPageGeneratorComponent() {
           AI Landing Page Generator
         </h1>
         <p className="text-xl md:text-2xl text-center mb-8 text-gray-300">
-          Create a personalized landing page for your product in seconds.
+          Create a tailored landing page for your product in seconds.
         </p>
 
         <div className="bg-[#2d1854] rounded-lg p-6 mb-8">
@@ -62,7 +62,7 @@ export function LandingPageGeneratorComponent() {
             Hi there!
           </div>
           <div className="chat-bubble mb-4 bg-[#3b2064] p-4 rounded-lg inline-block">
-            Please enter your product URL and target customer URL to generate a personalized landing page.
+            Please enter your product URL and target customer URL to generate a tailored landing page.
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -100,7 +100,7 @@ export function LandingPageGeneratorComponent() {
         </div>
 
         <p className="text-center text-sm text-gray-400">
-          Powered by AI to create stunning, personalized landing pages for your products.
+          Powered by AI to create stunning, tailored landing pages for your products.
         </p>
       </div>
     </div>
