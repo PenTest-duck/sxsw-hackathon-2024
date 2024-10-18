@@ -51,7 +51,7 @@ export function LandingPageGeneratorComponent() {
     <div className="min-h-screen bg-[#1e0a3c] text-white flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-3xl">
         <h1 className="text-4xl md:text-6xl font-bold mb-4 text-center bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 text-transparent bg-clip-text">
-          AI Landing Page Generator
+          outLANDish.ai
         </h1>
         <p className="text-xl md:text-2xl text-center mb-8 text-gray-300">
           Create a tailored landing page for your product in seconds.
