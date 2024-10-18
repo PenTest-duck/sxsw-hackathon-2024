@@ -1,17 +1,50 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Loader2 } from "lucide-react"
 
 export function LandingPageGeneratorComponent() {
   const [productUrl, setProductUrl] = useState('')
   const [customerUrl, setCustomerUrl] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission here
-    console.log('Generating landing page for:', { productUrl, customerUrl })
+    setIsLoading(true)
+
+    const submitData = { 
+      "product_website": productUrl, 
+      "customer_website": customerUrl,
+    };
+
+    fetch('http://127.0.0.1:5000/generate_landing_page',{
+      method: 'POST',
+      body: JSON.stringify(submitData),
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
+      .then(res => 
+          res.json().then(data => ({
+              data: data,
+              ok: res.ok,
+          })
+      ).then(res => {
+        if (res.ok) {
+          // If the API call is successful, redirect to the return page
+          router.push(`http://127.0.0.1:8000/landing_pages/${res.data.id}`)
+        } else {
+          console.error("Oops! Something is wrong.")
+        }
+      }))
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => setIsLoading(false));
   }
 
   return (
@@ -51,9 +84,17 @@ export function LandingPageGeneratorComponent() {
             />
             <Button 
               type="submit"
-              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Generate Landing Page
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                'Generate Landing Page'
+              )}
             </Button>
           </form>
         </div>
