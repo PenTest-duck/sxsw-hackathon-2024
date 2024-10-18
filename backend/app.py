@@ -5,4 +5,5 @@ app = Flask(__name__)
 
 @app.route("/generate_landing_page", methods=["POST"])
 def generate_landing_page():
-    return relevance.perform_ai_magic(request.form["product_website"], request.form["customer_website"])
+    data = request.get_json()
+    return relevance.perform_ai_magic(data.get("product_website"), data.get("customer_website"))

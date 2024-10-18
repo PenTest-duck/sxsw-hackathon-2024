@@ -88,7 +88,7 @@ def store_to_file(output: str) -> str:
     output_json = json.loads(output, strict=False)
     id = str(uuid.uuid4())
 
-    dir = f"landing_pages/{output_json["name"]}/{id}" 
+    dir = f"landing_pages/{id}" 
     os.makedirs(dir)
 
     with open(f"{dir}/index.html", "w+") as f:
