@@ -98,8 +98,6 @@ def store_to_file(output: str) -> str:
 
     return id
 
-
-
 if __name__ == "__main__":
     product_url = input("Product URL: ")
     customer_url = input("Customer URL: ")
