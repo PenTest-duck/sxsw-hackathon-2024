@@ -1,7 +1,10 @@
 from dotenv import load_dotenv
+from bs4 import BeautifulSoup
 import os
 import requests
 import time
+import json
+import uuid
 
 load_dotenv()
 
@@ -9,7 +12,34 @@ BASE_URL = f"https://api-{os.getenv("RELEVANCE_AI_REGION")}.stack.tryrelevance.c
 HEADERS = { "Authorization": os.getenv("RELEVANCE_AI_AUTH_TOKEN") }
 POLL_SECONDS = 15
 
-def generate_landing_page(product_url: str, customer_url: str) -> str:
+def perform_ai_magic(product_url: str, customer_url: str) -> str:
+    img_urls = scrape_images(product_url)
+    output = generate_landing_page(product_url, customer_url, img_urls)
+    return store_to_file(output)
+
+def scrape_images(product_url: str) -> list[str]:
+    response = requests.get(product_url)
+    parsed_img_urls = []
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        img_tags = soup.find_all('img')
+        
+        img_urls = [img['src'] for img in img_tags if 'src' in img.attrs]
+        img_urls = [url for url in img_urls if not url.startswith("data:")]
+
+        for url in img_urls:
+            parsed_url = url
+            if url.startswith("//"):
+                parsed_url = "https:" + url
+            elif url.startswith("/"):
+                parsed_url = product_url + url
+            parsed_img_urls.append(parsed_url)
+    else:
+        print(f"Failed to retrieve the page. Status code: {response.status_code}")
+
+    return parsed_img_urls
+
+def generate_landing_page(product_url: str, customer_url: str, img_urls: list[str]) -> str:
     trigger_response = requests.post(
         BASE_URL + "/agents/trigger", 
         headers=HEADERS, 
@@ -17,10 +47,11 @@ def generate_landing_page(product_url: str, customer_url: str) -> str:
             "message": {
                 "role": "user",
                 "content": f"""
-                    {
+                    {{
                         "customer_website": "{customer_url}",
                         "product_website": "{product_url}",
-                    }
+                        "img_urls": "{json.dumps(img_urls)}",
+                    }}
                 """,
             },
             "agent_id": os.getenv("RELEVANCE_AI_AGENT_ID"),
@@ -44,7 +75,8 @@ def generate_landing_page(product_url: str, customer_url: str) -> str:
 
         for update in status['updates']:
             if update['type'] == "chain-success":
-                done = True
+                print(status)
+                return r"{}".format(update["output"]["output"]["answer"]) # need to format as raw string for JSON parsing
 
         if done:
             break
@@ -52,10 +84,25 @@ def generate_landing_page(product_url: str, customer_url: str) -> str:
         print("waiting for agent response...")
         time.sleep(POLL_SECONDS) 
 
-    return status
+def store_to_file(output: str) -> str:
+    output_json = json.loads(output, strict=False)
+    id = str(uuid.uuid4())
+
+    dir = f"landing_pages/{output_json["name"]}/{id}" 
+    os.makedirs(dir)
+
+    with open(f"{dir}/index.html", "w+") as f:
+        f.write(output_json["html"])
+    with open(f"{dir}/style.css", "w+") as f:
+        f.write(output_json["css"])
+
+    return id
+
+
 
 if __name__ == "__main__":
     product_url = input("Product URL: ")
     customer_url = input("Customer URL: ")
-    resp = generate_landing_page(product_url, customer_url)
-    print(resp)
+    img_urls = scrape_images(product_url)
+    output = generate_landing_page(product_url, customer_url, img_urls)
+    print(store_to_file(output))
