@@ -1,12 +1,19 @@
 # outLANDish.ai
 Create a tailored landing page for your product in seconds.
 
+![outLANDish.ai frontend](./img/outlandish-frontend.png)
+
 Whether it's selling a CRM product to a gelato chain, or selling a safety management platform to a mining giant, **outLANDish.ai** is your one-click AI tool to generate landing pages tailored to the target company's profile!
 
-![Landing page of Zoho for Messina](./img/zoho-messina.png)
-
 Our submission for the SXSW Sydney Build Club AI Hackathon 2024.
+
 Team: Chris Yoo, Shreya Mukherjee, Shuwei Guo
+
+![Landing page of Zoho for Messina](./img/zoho-messina.png)
+*Landing page of Zoho for Messina*
+
+![Landing page of SafetyCulture for Rio Tinto](./img/safetyculture-riotinto.png)
+*Landing page of SafetyCulture for Rio Tinto*
 
 ## How it works
 1. The user provides the URL to the product and the URL to the target company.
